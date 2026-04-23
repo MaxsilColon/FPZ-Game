@@ -1,0 +1,62 @@
+═══════════════════════════════════════════════════════════════
+  TAREA 2.5: AGREGAR SPLIT_SCREEN_MANAGER A ZOMBIE.UNITY
+═══════════════════════════════════════════════════════════════
+
+✅ CAMBIOS AUTOMÁTICOS COMPLETADOS:
+  • Script Split_Screen_Manager.cs actualizado con método Start()
+  • Documentación creada
+
+⚠️ ACCIÓN REQUERIDA DEL USUARIO:
+  Los archivos .unity son binarios y requieren configuración manual
+  en Unity Editor.
+
+───────────────────────────────────────────────────────────────
+PASOS RÁPIDOS:
+───────────────────────────────────────────────────────────────
+
+1. Abrir Unity Editor
+2. Abrir escena: Assets/Zombie/zombie.unity
+3. Hierarchy → Create Empty → Nombre: "SplitScreenManager"
+4. Add Component → "Split_Screen_Manager"
+5. Configurar en Inspector:
+   • Player One Prefab: Assets/Prefabs/Player.prefab
+   • AI Companion Prefab: (dejar vacío por ahora)
+   • Player One Spawn Point: Crear GameObject en (0, 1, 0)
+   • AI Companion Spawn Point: Crear GameObject en (2, 1, 0)
+6. Guardar escena: Ctrl+S / Cmd+S
+
+───────────────────────────────────────────────────────────────
+VALIDACIÓN:
+───────────────────────────────────────────────────────────────
+
+Presionar Play:
+  ⚠️ Verás error: "aiCompanionPrefab es null"
+  ✅ Esto es NORMAL y esperado en este punto
+  ✅ Se resolverá en la tarea 4.1
+
+───────────────────────────────────────────────────────────────
+DOCUMENTACIÓN COMPLETA:
+───────────────────────────────────────────────────────────────
+
+📄 Instrucciones detalladas:
+   Assets/Zombie/INSTRUCCIONES_SPLIT_SCREEN_MANAGER.md
+
+📄 Resumen ejecutivo:
+   Assets/Zombie/RESUMEN_TAREA_2.5.md
+
+📄 Diagrama visual:
+   Assets/Zombie/DIAGRAMA_CONFIGURACION_SPLIT_SCREEN.md
+
+🔧 Script de validación (opcional):
+   Assets/Scripts/SplitScreen/Managers/Split_Screen_Manager_Validator.cs
+
+───────────────────────────────────────────────────────────────
+PRÓXIMOS PASOS:
+───────────────────────────────────────────────────────────────
+
+Después de completar esta tarea:
+  → Tarea 3: Checkpoint - Verificar configuración
+  → Tarea 4.1: Crear prefab AI_Companion
+  → Volver a asignar AI_Companion en SplitScreenManager
+
+═══════════════════════════════════════════════════════════════
