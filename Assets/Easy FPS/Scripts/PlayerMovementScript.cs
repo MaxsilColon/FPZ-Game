@@ -348,14 +348,5 @@ public class PlayerMovementScript : MonoBehaviour {
 	public AudioSource _walkSound;
 	[Tooltip("Run Sound player makes.")]
 	public AudioSource _runSound;
-
-	[Header("Shooting Properties")]
-	private LayerMask ignoreLayer;//to ignore player layer
-	Ray ray1, ray2, ray3, ray4, ray5, ray6, ray7, ray8, ray9;
-	private float rayDetectorMeeleSpace = 0.15f;
-	private float offsetStart = 0.05f;
-	[Tooltip("Put BulletSpawn gameobject here, palce from where bullets are created.")]
-	[HideInInspector]
-	public Transform bulletSpawn; //from here we shoot a ray to check where we hit him;
 }
 
