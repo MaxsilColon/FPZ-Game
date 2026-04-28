@@ -3,8 +3,8 @@ using UnityEditor;
 
 public class Setup_Racing_Colors : EditorWindow
 {
-    private Color carColor = Color.red;
-    private Color groundColor = new Color(0.3f, 0.3f, 0.3f); // Gris oscuro para asfalto
+    private Color carColor = Color.black; // Negro por defecto
+    private Color groundColor = new Color(0.5f, 0.5f, 0.5f); // Gris claro para contraste con negro
     private Color skyColor = new Color(0.5f, 0.7f, 1f); // Azul cielo
 
     [MenuItem("Tools/Setup Racing Colors")]
@@ -44,6 +44,12 @@ public class Setup_Racing_Colors : EditorWindow
         GUILayout.Label("Quick Presets:", EditorStyles.boldLabel);
         
         GUILayout.BeginHorizontal();
+        if (GUILayout.Button("Black Car ★", GUILayout.Height(35)))
+        {
+            carColor = Color.black;
+            groundColor = new Color(0.5f, 0.5f, 0.5f);
+            skyColor = new Color(0.5f, 0.7f, 1f);
+        }
         if (GUILayout.Button("Red Car"))
         {
             carColor = Color.red;
@@ -56,25 +62,19 @@ public class Setup_Racing_Colors : EditorWindow
             groundColor = new Color(0.3f, 0.3f, 0.3f);
             skyColor = new Color(0.5f, 0.7f, 1f);
         }
+        GUILayout.EndHorizontal();
+
+        GUILayout.BeginHorizontal();
         if (GUILayout.Button("Yellow Car"))
         {
             carColor = Color.yellow;
             groundColor = new Color(0.3f, 0.3f, 0.3f);
             skyColor = new Color(0.5f, 0.7f, 1f);
         }
-        GUILayout.EndHorizontal();
-
-        GUILayout.BeginHorizontal();
         if (GUILayout.Button("Green Car"))
         {
             carColor = Color.green;
             groundColor = new Color(0.3f, 0.3f, 0.3f);
-            skyColor = new Color(0.5f, 0.7f, 1f);
-        }
-        if (GUILayout.Button("Black Car"))
-        {
-            carColor = Color.black;
-            groundColor = new Color(0.5f, 0.5f, 0.5f);
             skyColor = new Color(0.5f, 0.7f, 1f);
         }
         if (GUILayout.Button("White Car"))
@@ -122,8 +122,8 @@ public class Setup_Racing_Colors : EditorWindow
                             {
                                 mat.shader = Shader.Find("Standard");
                                 mat.SetColor("_Color", carColor);
-                                mat.SetFloat("_Metallic", 0.5f);
-                                mat.SetFloat("_Glossiness", 0.7f);
+                                mat.SetFloat("_Metallic", 0.8f); // Más metálico para negro brillante
+                                mat.SetFloat("_Glossiness", 0.9f); // Más brillante
                                 EditorUtility.SetDirty(mat);
                                 carsFixed++;
                             }
