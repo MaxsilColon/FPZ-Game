@@ -8,12 +8,12 @@ public class FixCarroRosado : EditorWindow
     {
         Debug.Log("=== INICIANDO ARREGLO ===");
         
-        int materialesArreglados = 0;
+        int materialesProyecto = 0;
+        int materialesEscena = 0;
         
-        // Buscar TODOS los materiales en la carpeta del juego de carreras
+        // PASO 1: Arreglar materiales en el PROYECTO
+        Debug.Log("PASO 1: Arreglando materiales del proyecto...");
         string[] guids = AssetDatabase.FindAssets("t:Material", new[] { "Assets/Realistic Car Controller Pro" });
-        
-        Debug.Log($"Encontrados {guids.Length} materiales para revisar");
         
         foreach (string guid in guids)
         {
@@ -22,55 +22,101 @@ public class FixCarroRosado : EditorWindow
             
             if (mat != null)
             {
-                // Cambiar SIEMPRE a shader Standard
                 mat.shader = Shader.Find("Standard");
                 
                 string nombreMaterial = mat.name.ToLower();
                 
-                // Determinar color según el nombre
                 if (nombreMaterial.Contains("body") || nombreMaterial.Contains("skyline_body"))
                 {
-                    // CARRO - Negro brillante
                     mat.SetColor("_Color", Color.black);
                     mat.SetFloat("_Metallic", 0.8f);
                     mat.SetFloat("_Glossiness", 0.9f);
-                    Debug.Log($"CARRO NEGRO: {mat.name}");
                 }
                 else if (nombreMaterial.Contains("wheel"))
                 {
-                    // RUEDAS - Negro mate
                     mat.SetColor("_Color", new Color(0.2f, 0.2f, 0.2f));
                     mat.SetFloat("_Metallic", 0.3f);
                     mat.SetFloat("_Glossiness", 0.4f);
-                    Debug.Log($"RUEDA: {mat.name}");
                 }
                 else if (nombreMaterial.Contains("dev"))
                 {
-                    // SUELO - Gris claro
                     mat.SetColor("_Color", new Color(0.6f, 0.6f, 0.6f));
                     mat.SetFloat("_Metallic", 0.0f);
                     mat.SetFloat("_Glossiness", 0.2f);
-                    Debug.Log($"SUELO GRIS: {mat.name}");
                 }
                 else
                 {
-                    // OTROS - Blanco
                     mat.SetColor("_Color", Color.white);
                     mat.SetFloat("_Metallic", 0.2f);
                     mat.SetFloat("_Glossiness", 0.5f);
-                    Debug.Log($"OTRO: {mat.name}");
                 }
                 
                 EditorUtility.SetDirty(mat);
-                materialesArreglados++;
+                materialesProyecto++;
             }
         }
         
-        // Arreglar cámaras
+        // PASO 2: Arreglar materiales en la ESCENA ACTUAL
+        Debug.Log("PASO 2: Arreglando objetos en la escena...");
+        GameObject[] todosLosObjetos = Object.FindObjectsOfType<GameObject>();
+        
+        foreach (GameObject obj in todosLosObjetos)
+        {
+            Renderer[] renderers = obj.GetComponentsInChildren<Renderer>(true);
+            
+            foreach (Renderer rend in renderers)
+            {
+                if (rend.sharedMaterials != null)
+                {
+                    foreach (Material mat in rend.sharedMaterials)
+                    {
+                        if (mat != null)
+                        {
+                            mat.shader = Shader.Find("Standard");
+                            
+                            string nombreObj = obj.name.ToLower();
+                            string nombreMat = mat.name.ToLower();
+                            
+                            // Identificar si es carro o suelo
+                            if (nombreObj.Contains("body") || nombreMat.Contains("body") || 
+                                nombreObj.Contains("skyline") || nombreMat.Contains("skyline"))
+                            {
+                                mat.SetColor("_Color", Color.black);
+                                mat.SetFloat("_Metallic", 0.8f);
+                                mat.SetFloat("_Glossiness", 0.9f);
+                                Debug.Log($"CARRO NEGRO: {obj.name} - {mat.name}");
+                            }
+                            else if (nombreObj.Contains("wheel") || nombreMat.Contains("wheel"))
+                            {
+                                mat.SetColor("_Color", new Color(0.2f, 0.2f, 0.2f));
+                                mat.SetFloat("_Metallic", 0.3f);
+                                mat.SetFloat("_Glossiness", 0.4f);
+                                Debug.Log($"RUEDA: {obj.name} - {mat.name}");
+                            }
+                            else if (nombreObj.Contains("plane") || nombreObj.Contains("ground") || 
+                                     nombreObj.Contains("floor") || nombreMat.Contains("dev"))
+                            {
+                                mat.SetColor("_Color", new Color(0.6f, 0.6f, 0.6f));
+                                mat.SetFloat("_Metallic", 0.0f);
+                                mat.SetFloat("_Glossiness", 0.2f);
+                                Debug.Log($"SUELO GRIS: {obj.name} - {mat.name}");
+                            }
+                            
+                            EditorUtility.SetDirty(mat);
+                            EditorUtility.SetDirty(rend);
+                            materialesEscena++;
+                        }
+                    }
+                }
+            }
+        }
+        
+        // PASO 3: Arreglar cámaras
+        Debug.Log("PASO 3: Arreglando cámaras...");
         Camera[] camaras = Object.FindObjectsOfType<Camera>();
         foreach (Camera cam in camaras)
         {
-            cam.backgroundColor = new Color(0.5f, 0.7f, 1f); // Azul cielo
+            cam.backgroundColor = new Color(0.5f, 0.7f, 1f);
             cam.clearFlags = CameraClearFlags.SolidColor;
             EditorUtility.SetDirty(cam);
         }
@@ -78,8 +124,11 @@ public class FixCarroRosado : EditorWindow
         // Guardar todo
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
+        UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(
+            UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene()
+        );
         
-        string mensaje = $"LISTO!\n\nMateriales arreglados: {materialesArreglados}\nCámaras: {camaras.Length}\n\nCarro: NEGRO\nSuelo: GRIS\nCielo: AZUL";
+        string mensaje = $"LISTO!\n\nMateriales proyecto: {materialesProyecto}\nMateriales escena: {materialesEscena}\nCámaras: {camaras.Length}\n\nCarro: NEGRO\nSuelo: GRIS\nCielo: AZUL";
         Debug.Log(mensaje);
         EditorUtility.DisplayDialog("Arreglado!", mensaje, "OK");
     }

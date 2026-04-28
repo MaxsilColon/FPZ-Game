@@ -4139,7 +4139,7 @@ Material:
     - _LightAngle: 3.1416
     - _MaskSoftnessX: 0
     - _MaskSoftnessY: 0
-    - _Metallic: 0.3
+    - _Metallic: 0.2
     - _Mode: 0
     - _OcclusionStrength: 1
     - _OutlineSoftness: 0.2
