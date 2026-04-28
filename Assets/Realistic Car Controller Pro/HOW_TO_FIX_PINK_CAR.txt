@@ -1,0 +1,59 @@
+═══════════════════════════════════════════════════════════
+  HOW TO FIX THE PINK CAR AND GROUND
+═══════════════════════════════════════════════════════════
+
+PROBLEM: The car and ground are pink/magenta in the game
+
+SOLUTION: Follow these steps in Unity Editor
+
+═══════════════════════════════════════════════════════════
+STEP 1: Open Unity
+═══════════════════════════════════════════════════════════
+
+Open this project in Unity Editor
+
+═══════════════════════════════════════════════════════════
+STEP 2: Click the Menu
+═══════════════════════════════════════════════════════════
+
+At the top of Unity, click:
+
+    Tools → ★ CLICK HERE - FIX PINK CAR ★
+
+═══════════════════════════════════════════════════════════
+STEP 3: Click "YES - FIX IT!"
+═══════════════════════════════════════════════════════════
+
+A dialog will appear. Click the button that says:
+
+    "YES - FIX IT!"
+
+═══════════════════════════════════════════════════════════
+STEP 4: Wait
+═══════════════════════════════════════════════════════════
+
+Wait a few seconds while Unity fixes all the materials.
+
+You will see a "SUCCESS!" message when it's done.
+
+═══════════════════════════════════════════════════════════
+RESULT:
+═══════════════════════════════════════════════════════════
+
+✓ Car will be BLACK (shiny)
+✓ Ground will be GRAY (light)
+✓ Sky will be BLUE
+✓ No more pink!
+
+═══════════════════════════════════════════════════════════
+IF IT DOESN'T WORK:
+═══════════════════════════════════════════════════════════
+
+1. Make sure you opened the racing scene:
+   Assets/Realistic Car Controller Pro/Scenes/RCCP_Scene_Blank_Prototype.unity
+
+2. Try clicking the menu option again
+
+3. Check the Console window (Window → General → Console) for errors
+
+═══════════════════════════════════════════════════════════
