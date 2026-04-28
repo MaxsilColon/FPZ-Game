@@ -43,7 +43,7 @@ public class Fix_Racing_Game_Materials : EditorWindow
 
     static void FixAllMaterials()
     {
-        // Buscar todos los materiales en el proyecto
+        // Buscar todos los materiales en el proyecto de carreras
         string[] guids = AssetDatabase.FindAssets("t:Material", new[] { "Assets/Realistic Car Controller Pro" });
         
         int fixedCount = 0;
@@ -55,26 +55,64 @@ public class Fix_Racing_Game_Materials : EditorWindow
             
             if (mat != null)
             {
-                // Si el material está rosado (shader no encontrado o incompatible)
-                if (mat.shader == null || mat.shader.name.Contains("Hidden") || !mat.shader.isSupported)
+                bool needsFix = false;
+                
+                // Verificar si necesita arreglo
+                if (mat.shader == null || !mat.shader.isSupported || mat.shader.name.Contains("Hidden"))
+                {
+                    needsFix = true;
+                }
+                
+                // Verificar si el color es magenta/rosado
+                if (mat.HasProperty("_Color"))
+                {
+                    Color currentColor = mat.GetColor("_Color");
+                    if (Mathf.Approximately(currentColor.r, 1f) && Mathf.Approximately(currentColor.g, 0f) && Mathf.Approximately(currentColor.b, 1f))
+                    {
+                        needsFix = true;
+                    }
+                }
+                
+                if (needsFix)
                 {
                     // Cambiar a shader Standard
                     mat.shader = Shader.Find("Standard");
                     
-                    // Configurar propiedades básicas
-                    if (mat.HasProperty("_Color"))
+                    // Determinar color basado en el nombre del material
+                    string matName = mat.name.ToLower();
+                    
+                    if (matName.Contains("body") || matName.Contains("skyline_body"))
                     {
-                        // Si el color es magenta/rosado, cambiarlo a blanco
-                        Color currentColor = mat.GetColor("_Color");
-                        if (Mathf.Approximately(currentColor.r, 1f) && Mathf.Approximately(currentColor.g, 0f) && Mathf.Approximately(currentColor.b, 1f))
-                        {
-                            mat.SetColor("_Color", Color.white);
-                        }
+                        // Carrocería del auto - negro brillante
+                        mat.SetColor("_Color", Color.black);
+                        mat.SetFloat("_Metallic", 0.8f);
+                        mat.SetFloat("_Glossiness", 0.9f);
+                    }
+                    else if (matName.Contains("wheel") || matName.Contains("tire"))
+                    {
+                        // Ruedas - negro mate
+                        mat.SetColor("_Color", new Color(0.1f, 0.1f, 0.1f));
+                        mat.SetFloat("_Metallic", 0.2f);
+                        mat.SetFloat("_Glossiness", 0.4f);
+                    }
+                    else if (matName.Contains("dev") || matName.Contains("ground") || matName.Contains("road"))
+                    {
+                        // Suelo - gris claro
+                        mat.SetColor("_Color", new Color(0.5f, 0.5f, 0.5f));
+                        mat.SetFloat("_Metallic", 0.1f);
+                        mat.SetFloat("_Glossiness", 0.3f);
+                    }
+                    else
+                    {
+                        // Otros - blanco por defecto
+                        mat.SetColor("_Color", Color.white);
+                        mat.SetFloat("_Metallic", 0.3f);
+                        mat.SetFloat("_Glossiness", 0.5f);
                     }
                     
                     EditorUtility.SetDirty(mat);
                     fixedCount++;
-                    Debug.Log($"Fixed material: {mat.name}");
+                    Debug.Log($"Fixed material: {mat.name} at {path}");
                 }
             }
         }
@@ -83,7 +121,7 @@ public class Fix_Racing_Game_Materials : EditorWindow
         AssetDatabase.Refresh();
         
         Debug.Log($"✓ Fixed {fixedCount} materials!");
-        EditorUtility.DisplayDialog("Success", $"Fixed {fixedCount} materials!", "OK");
+        EditorUtility.DisplayDialog("Success", $"Fixed {fixedCount} materials!\n\nAuto: Negro brillante\nSuelo: Gris claro", "OK");
     }
 
     static void FixCameraBackground()

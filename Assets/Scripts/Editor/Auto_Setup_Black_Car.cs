@@ -34,69 +34,93 @@ public class Auto_Setup_Black_Car
         Color groundColor = new Color(0.5f, 0.5f, 0.5f); // Gris claro para contraste
         Color skyColor = new Color(0.5f, 0.7f, 1f); // Azul cielo
 
-        int carsFixed = 0;
-        int groundsFixed = 0;
+        int materialsFixed = 0;
         int camerasFixed = 0;
 
-        // Buscar todos los GameObjects en la escena
+        // PRIMERO: Arreglar TODOS los materiales rosados en el proyecto
+        string[] guids = AssetDatabase.FindAssets("t:Material", new[] { "Assets/Realistic Car Controller Pro" });
+        
+        foreach (string guid in guids)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            Material mat = AssetDatabase.LoadAssetAtPath<Material>(path);
+            
+            if (mat != null)
+            {
+                // Si el material está rosado o tiene shader inválido
+                if (mat.shader == null || !mat.shader.isSupported || mat.shader.name.Contains("Hidden"))
+                {
+                    mat.shader = Shader.Find("Standard");
+                    
+                    // Determinar si es parte del auto o del suelo por el nombre
+                    string matName = mat.name.ToLower();
+                    
+                    if (matName.Contains("body") || matName.Contains("skyline") || matName.Contains("car"))
+                    {
+                        // Material del auto - negro brillante
+                        mat.SetColor("_Color", carColor);
+                        mat.SetFloat("_Metallic", 0.8f);
+                        mat.SetFloat("_Glossiness", 0.9f);
+                    }
+                    else if (matName.Contains("wheel") || matName.Contains("tire") || matName.Contains("rim"))
+                    {
+                        // Ruedas - negro mate
+                        mat.SetColor("_Color", new Color(0.1f, 0.1f, 0.1f));
+                        mat.SetFloat("_Metallic", 0.2f);
+                        mat.SetFloat("_Glossiness", 0.4f);
+                    }
+                    else
+                    {
+                        // Suelo/otros - gris
+                        mat.SetColor("_Color", groundColor);
+                        mat.SetFloat("_Metallic", 0.1f);
+                        mat.SetFloat("_Glossiness", 0.3f);
+                    }
+                    
+                    EditorUtility.SetDirty(mat);
+                    materialsFixed++;
+                    Debug.Log($"Fixed material: {mat.name}");
+                }
+            }
+        }
+
+        // SEGUNDO: Buscar objetos en la escena y aplicar colores
         GameObject[] allObjects = Object.FindObjectsOfType<GameObject>();
 
         foreach (GameObject obj in allObjects)
         {
-            // Buscar autos (objetos con "car", "vehicle", "skyline" en el nombre)
-            if (obj.name.ToLower().Contains("car") || 
-                obj.name.ToLower().Contains("vehicle") || 
-                obj.name.ToLower().Contains("prototype") ||
-                obj.name.ToLower().Contains("skyline"))
+            Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
+            foreach (Renderer rend in renderers)
             {
-                Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
-                foreach (Renderer rend in renderers)
+                foreach (Material mat in rend.sharedMaterials)
                 {
-                    // Evitar ruedas y partes específicas
-                    if (!rend.gameObject.name.ToLower().Contains("wheel") &&
-                        !rend.gameObject.name.ToLower().Contains("tire") &&
-                        !rend.gameObject.name.ToLower().Contains("rim"))
+                    if (mat != null)
                     {
-                        foreach (Material mat in rend.sharedMaterials)
-                        {
-                            if (mat != null)
-                            {
-                                // Asegurar que use shader Standard
-                                mat.shader = Shader.Find("Standard");
-                                
-                                // Color negro brillante
-                                mat.SetColor("_Color", carColor);
-                                mat.SetFloat("_Metallic", 0.8f); // Muy metálico
-                                mat.SetFloat("_Glossiness", 0.9f); // Muy brillante
-                                
-                                EditorUtility.SetDirty(mat);
-                                carsFixed++;
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Buscar pistas/suelo
-            if (obj.name.ToLower().Contains("ground") || 
-                obj.name.ToLower().Contains("road") || 
-                obj.name.ToLower().Contains("track") ||
-                obj.name.ToLower().Contains("plane") ||
-                obj.name.ToLower().Contains("floor"))
-            {
-                Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
-                foreach (Renderer rend in renderers)
-                {
-                    foreach (Material mat in rend.sharedMaterials)
-                    {
-                        if (mat != null)
+                        // Asegurar shader Standard
+                        if (mat.shader == null || !mat.shader.isSupported)
                         {
                             mat.shader = Shader.Find("Standard");
+                        }
+                        
+                        string objName = rend.gameObject.name.ToLower();
+                        string matName = mat.name.ToLower();
+                        
+                        // Identificar si es auto o suelo
+                        if (objName.Contains("body") || objName.Contains("skyline") || 
+                            matName.Contains("body") || matName.Contains("skyline"))
+                        {
+                            mat.SetColor("_Color", carColor);
+                            mat.SetFloat("_Metallic", 0.8f);
+                            mat.SetFloat("_Glossiness", 0.9f);
+                            EditorUtility.SetDirty(mat);
+                        }
+                        else if (objName.Contains("ground") || objName.Contains("plane") || 
+                                 objName.Contains("floor") || matName.Contains("dev"))
+                        {
                             mat.SetColor("_Color", groundColor);
                             mat.SetFloat("_Metallic", 0.1f);
                             mat.SetFloat("_Glossiness", 0.3f);
                             EditorUtility.SetDirty(mat);
-                            groundsFixed++;
                         }
                     }
                 }
@@ -116,10 +140,10 @@ public class Auto_Setup_Black_Car
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 
-        string message = $"✓ Auto negro configurado!\n\nMateriales del auto: {carsFixed}\nMateriales del suelo: {groundsFixed}\nCámaras: {camerasFixed}";
+        string message = $"✓ Auto negro configurado!\n\nMateriales arreglados: {materialsFixed}\nCámaras: {camerasFixed}";
         Debug.Log(message);
         
-        if (carsFixed > 0 || groundsFixed > 0 || camerasFixed > 0)
+        if (materialsFixed > 0 || camerasFixed > 0)
         {
             EditorUtility.DisplayDialog("Auto Negro Configurado", message, "OK");
         }
