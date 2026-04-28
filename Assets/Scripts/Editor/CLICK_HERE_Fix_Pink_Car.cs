@@ -18,7 +18,7 @@ public class CLICK_HERE_Fix_Pink_Car : EditorWindow
 
     static void FixEverything()
     {
-        int fixed = 0;
+        int fixedCount = 0;
 
         // 1. Fix ALL materials in the Realistic Car Controller Pro folder
         Debug.Log("=== FIXING MATERIALS ===");
@@ -70,7 +70,7 @@ public class CLICK_HERE_Fix_Pink_Car : EditorWindow
                 }
                 
                 EditorUtility.SetDirty(mat);
-                fixed++;
+                fixedCount++;
             }
         }
 
@@ -89,7 +89,7 @@ public class CLICK_HERE_Fix_Pink_Car : EditorWindow
         AssetDatabase.Refresh();
 
         // 4. Show result
-        string result = $"✓✓✓ DONE! ✓✓✓\n\nFixed {fixed} materials\nFixed {cameras.Length} cameras\n\nCar: BLACK\nGround: GRAY\nSky: BLUE";
+        string result = $"✓✓✓ DONE! ✓✓✓\n\nFixed {fixedCount} materials\nFixed {cameras.Length} cameras\n\nCar: BLACK\nGround: GRAY\nSky: BLUE";
         Debug.Log(result);
         EditorUtility.DisplayDialog("SUCCESS!", result, "OK");
     }
