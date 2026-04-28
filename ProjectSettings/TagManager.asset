@@ -21,11 +21,11 @@ TagManager:
   - UI
   - Weapon
   - Player
-  - 
-  - 
-  - 
-  - 
-  - 
+  - RCCP_Vehicle
+  - RCCP_WheelCollider
+  - RCCP_DetachablePart
+  - RCCP_Prop
+  - RCCP_Obstacle
   - 
   - 
   - 
